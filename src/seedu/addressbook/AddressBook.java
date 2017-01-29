@@ -183,6 +183,10 @@ public class AddressBook {
      */
     private static final ArrayList<String[]> ALL_PERSONS = new ArrayList<>();
 
+    private static final String COMMAND_SORT_WORD = "sort"; // RIGHT HERE!
+    private static final String COMMAND_SORT_DESC = "Displays all persons as a list with index numbers in order.";
+    private static final String COMMAND_SORT_EXAMPLE = COMMAND_SORT_WORD;
+
     /**
      * Stores the most recent list of persons shown to the user as a result of a user command.
      * This is a subset of the full list. Deleting persons in the pull list does not delete
@@ -384,6 +388,8 @@ public class AddressBook {
             return executeFindPersons(COMMAND_ARGS);
         case COMMAND_LIST_WORD:
             return executeListAllPersonsInAddressBook();
+        case COMMAND_SORT_WORD:								// RIGHT HERE!
+        	return executeSortAllPersonsInAddressBook();
         case COMMAND_DELETE_WORD:
             return executeDeletePerson(COMMAND_ARGS);
         case COMMAND_CLEAR_WORD:
@@ -397,7 +403,23 @@ public class AddressBook {
         }
 	}
 
-    /**
+    private static String executeSortAllPersonsInAddressBook() { //RIGHT HERE!
+    	ArrayList<String[]> toBeDisplayed = getAllPersonsInAddressBook();
+    	String[] temp;
+    	for(int i = 0; i < toBeDisplayed.size() - 1; i++){
+    		for (int j = i + 1; j < toBeDisplayed.size(); j++){
+    			if(getNameFromPerson(toBeDisplayed.get(i)).compareTo(getNameFromPerson(toBeDisplayed.get(j))) > 0){
+    				temp = toBeDisplayed.get(i);
+    				toBeDisplayed.set(i,toBeDisplayed.get(j));
+    				toBeDisplayed.set(j,temp);
+        		}
+    		}
+    	}
+    	showToUser(toBeDisplayed);
+    	return getMessageForPersonsDisplayedSummary(toBeDisplayed);
+	}
+
+	/**
      * Splits raw user input into command word and command arguments string
      *
      * @return  size 2 array; first element is the command type and second element is the arguments string
@@ -1096,10 +1118,11 @@ public class AddressBook {
      */
 
     /** Returns usage info for all commands */
-    private static String getUsageInfoForAllCommands() {
+    private static String getUsageInfoForAllCommands() { //RIGHT HERE
         return getUsageInfoForAddCommand() + LS
                 + getUsageInfoForFindCommand() + LS
                 + getUsageInfoForViewCommand() + LS
+                + getUsageInfoForViewSortCommand() + LS
                 + getUsageInfoForDeleteCommand() + LS
                 + getUsageInfoForClearCommand() + LS
                 + getUsageInfoForExitCommand() + LS
@@ -1137,6 +1160,12 @@ public class AddressBook {
     private static String getUsageInfoForViewCommand() {
         return String.format(MESSAGE_COMMAND_HELP, COMMAND_LIST_WORD, COMMAND_LIST_DESC) + LS
                 + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_LIST_EXAMPLE) + LS;
+    }
+    
+    /** Returns the string for showing 'sort' command usage instruction */
+    private static String getUsageInfoForViewSortCommand() { //RIGHT HERE!
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_SORT_WORD, COMMAND_SORT_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_SORT_EXAMPLE) + LS;
     }
 
     /** Returns string for showing 'help' command usage instruction */
